@@ -2,7 +2,9 @@ import React, {use, useState, useEffect} from 'react'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
-import { SelectBudgetOptions,SelectTravelList } from '@/constants/options';
+import { AI_PROMPT, SelectBudgetOptions,SelectTravelList } from '@/constants/options';
+import { toast } from 'sonner';
+import { chatSession } from '../service/AIModel.jsx';
 
 function CreateTrip() {
     const [place,setPlace] = useState();
@@ -19,11 +21,18 @@ function CreateTrip() {
     },[formData])
 
     const OnGenerateTrip=()=>{
-        if(formData?.noOfDays>5){
-            alert("Currently we support trip plan up to 5 days only.")
+        if(formData?.noOfDays>5&&!formData?.location||!formData?.budget||!formData?.traveler){
+            toast("Please fill all details!");
+            //alert("Currently we support trip plan up to 5 days only.")
             return;
         }
-        console.log("Generating Trip Plan",formData);
+        const FINAL_PROMPT = AI_PROMPT.replace('{location}',formData?.location?.label)
+        .replace('{totalDays}',formData?.noOfDays)
+        .replace('{traveler}',formData?.traveler)
+        .replace('{budget}',formData?.budget)
+        .replace('{totalDays}',formData?.noOfDays)
+
+        console.log(FINAL_PROMPT);
     }
 
     return (
