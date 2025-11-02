@@ -8,7 +8,7 @@ if (!apiKey) {
 const genai = new GoogleGenerativeAI(apiKey);
 
 const model = genai.getGenerativeModel({
-    model: "gemini-pro",
+    model: "gemini-2.5-pro",
 });
 
 const generationConfig = {

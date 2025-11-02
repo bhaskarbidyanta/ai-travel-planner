@@ -20,7 +20,7 @@ function CreateTrip() {
         console.log(formData);
     },[formData])
 
-    const OnGenerateTrip=()=>{
+    const OnGenerateTrip=async()=>{
         if(formData?.noOfDays>5&&!formData?.location||!formData?.budget||!formData?.traveler){
             toast("Please fill all details!");
             //alert("Currently we support trip plan up to 5 days only.")
@@ -33,6 +33,10 @@ function CreateTrip() {
         .replace('{totalDays}',formData?.noOfDays)
 
         console.log(FINAL_PROMPT);
+
+        const result = await chatSession.sendMessage(FINAL_PROMPT);
+
+        console.log(result?.response?.text());
     }
 
     return (
