@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import InfoSection from '../../view-trip/components/InfoSection.jsx';
 import Hotels from '../../view-trip/components/Hotels.jsx';
+import PlacesToVisit from '../components/PlacesToVisit.jsx';
+
 function Viewtrip() {
     const {tripId}=useParams();
     const [trip,setTrip]=useState([]);
@@ -37,7 +39,7 @@ function Viewtrip() {
         {/* Recommended Hotels */}
         <Hotels trip={trip}/>
         {/*Daily Plan*/}
-
+        <PlacesToVisit trip={trip}/>
         {/* Footer */}
     </div>
   )
