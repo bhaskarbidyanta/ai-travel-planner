@@ -61,19 +61,53 @@ function CreateTrip() {
         //console.log(FINAL_PROMPT);
 
         const result = await chatSession.sendMessage(FINAL_PROMPT);
+        const aiText = typeof result?.response?.text === 'function'
+            ? await result.response.text()
+            : (result?.response ?? String(result));
 
-        console.log(result?.response?.text());
+        console.log(aiText);
         setLoading(false);
-        SaveAiTrip(result?.response?.text());
+        SaveAiTrip(aiText);
+    }
+
+    // helper to extract JSON from AI output
+    function extractJsonFromString(s){
+        if(!s) return null;
+
+        // direct parse
+        try { return JSON.parse(s); } catch(e){}
+
+        // strip ``` or ```json fences
+        const fence = /```(?:json)?\s*([\s\S]*?)\s*```/i;
+        const m = s.match(fence);
+        let jsonStr = m ? m[1] : s;
+
+        // find first {...} block
+        const first = jsonStr.indexOf('{');
+        const last = jsonStr.lastIndexOf('}');
+        if(first !== -1 && last !== -1 && last >= first){
+            jsonStr = jsonStr.slice(first, last + 1);
+        }
+
+        jsonStr = jsonStr.trim();
+        return JSON.parse(jsonStr);
     }
 
     const SaveAiTrip=async(TripData)=>{
         setLoading(true);
         const user=JSON.parse(localStorage.getItem('user'));
         const docId=Date.now().toString();
+
+        let parsed = null;
+        try{
+            parsed = extractJsonFromString(TripData);
+        }catch(err){
+            console.warn("AI response could not be parsed as JSON, saving raw string. Error:", err);
+        }
+        
         await setDoc(doc(db,"AITrips",docId),{
             userSelection:formData,
-            tripData:JSON.parse(TripData),
+            tripData: parsed !== null ? parsed : TripData,
             userEmail:user?.email,
             docId:docId
         });
