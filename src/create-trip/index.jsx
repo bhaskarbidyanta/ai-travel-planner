@@ -13,6 +13,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from '../service/firebaseConfig.jsx';
 import { async } from '@firebase/util';
 import {AiOutlineLoading3Quarters} from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 
 //import Date from 'react-date-object';
 
@@ -21,6 +22,7 @@ function CreateTrip() {
     const [formData,setFormData]=useState([]);
     const [openDialog,setOpenDialog]=useState(false);
     const [loading,setLoading]=useState(false);
+    const navigate=useNavigate();
     const handleInputChange=(name,value)=>{
         setFormData({
             ...formData,
@@ -112,6 +114,7 @@ function CreateTrip() {
             docId:docId
         });
         setLoading(false);
+        navigate('/view-trip/'+docId);
     }
 
     const GetUserProfile=(tokenInfo)=>{
